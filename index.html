@@ -68,6 +68,11 @@
       text-align: center;
     }
 
+    .top-bar-spacer {
+      flex-shrink: 0;
+      width: 6.5rem;
+    }
+
     h1 {
       font-size: 1.15rem;
       color: var(--title-color);
@@ -238,14 +243,14 @@
     }
 
     .nutrient-input {
-      width: 3.8rem;
+      width: 7.5rem;
       background: var(--input-bg);
       border: 1px solid var(--input-border);
       border-radius: 5px;
       color: var(--text);
       font-size: 0.86rem;
       padding: 0.22rem 0.4rem;
-      text-align: right;
+      text-align: left;
     }
 
     .nutrient-input:focus {
@@ -259,6 +264,15 @@
       min-width: 1rem;
     }
 
+    /* ── Completed card ── */
+    .card-complete-mark {
+      display: none;
+      font-size: 1.1rem;
+      margin-right: 0.3rem;
+    }
+    .card.completed .card-complete-mark { display: inline; }
+    .card.completed .card-body { display: none; }
+
     @media (max-width: 360px) {
       h1 { font-size: 1rem; }
       .item span { font-size: 0.82rem; }
@@ -269,12 +283,13 @@
 
   <!-- TOP BAR -->
   <div class="top-bar">
-    <button class="reset-btn" id="resetBtn">🔄 Reiniciar</button>
+    <div class="top-bar-spacer"></div>
     <div class="header-info">
       <h1>☀️ Checklist Matutino</h1>
       <div class="fecha" id="fecha"></div>
       <div class="timer-total">⏱ <span id="timerTotal">00:00</span></div>
     </div>
+    <button class="reset-btn" id="resetBtn">🔄 Reiniciar</button>
   </div>
 
   <div class="grid">
@@ -283,6 +298,7 @@
     <div class="card agua">
       <div class="card-header">
         <div class="left"><span class="icon">💧</span>Agua</div>
+        <span class="card-complete-mark">✅</span>
         <span class="card-timer" id="timer-agua">--:--</span>
       </div>
       <div class="card-body">
@@ -300,6 +316,7 @@
     <div class="card sueno">
       <div class="card-header">
         <div class="left"><span class="icon">😴</span>Sueño</div>
+        <span class="card-complete-mark">✅</span>
         <span class="card-timer" id="timer-sueno">--:--</span>
       </div>
       <div class="card-body">
@@ -311,16 +328,16 @@
           <span>CPAP listo</span>
         </label>
         <label class="item">
-          <input type="checkbox" id="sueno-alarma" data-section="sueno" />
-          <span>Alarma configurada</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="sueno-clofreniamina" data-section="sueno" />
-          <span>Clorfeniramina tomada</span>
+          <input type="checkbox" id="sueno-clorfeniramina" data-section="sueno" />
+          <span>Clorfeniramina</span>
         </label>
         <label class="item">
           <input type="checkbox" id="sueno-melatonina" data-section="sueno" />
-          <span>Melatonina tomada</span>
+          <span>Melatonina</span>
+        </label>
+        <label class="item">
+          <input type="checkbox" id="sueno-alarma" data-section="sueno" />
+          <span>Alarma configurada</span>
         </label>
       </div>
     </div>
@@ -329,6 +346,7 @@
     <div class="card ejercicio">
       <div class="card-header">
         <div class="left"><span class="icon">🏋️</span>Ejercicio</div>
+        <span class="card-complete-mark">✅</span>
         <span class="card-timer" id="timer-ejercicio">--:--</span>
       </div>
       <div class="card-body">
@@ -354,6 +372,7 @@
     <div class="card dieta">
       <div class="card-header">
         <div class="left"><span class="icon">🥗</span>Dieta</div>
+        <span class="card-complete-mark">✅</span>
         <span class="card-timer" id="timer-dieta">--:--</span>
       </div>
       <div class="card-body">
@@ -365,15 +384,13 @@
         <div class="nutrient-row">
           <span class="nutrient-label">🥩 Proteína</span>
           <div class="nutrient-right">
-            <input type="number" class="nutrient-input" id="desayuno-proteina" min="0" max="500" step="1" placeholder="0" aria-label="Proteína de desayuno en gramos" />
-            <span class="nutrient-unit">g</span>
+            <input type="text" class="nutrient-input" id="desayuno-proteina" placeholder="ej. huevos" aria-label="Proteína de desayuno" />
           </div>
         </div>
         <div class="nutrient-row">
           <span class="nutrient-label">🥦 Fibra</span>
           <div class="nutrient-right">
-            <input type="number" class="nutrient-input" id="desayuno-fibra" min="0" max="200" step="1" placeholder="0" aria-label="Fibra de desayuno en gramos" />
-            <span class="nutrient-unit">g</span>
+            <input type="text" class="nutrient-input" id="desayuno-fibra" placeholder="ej. espinaca" aria-label="Fibra de desayuno" />
           </div>
         </div>
 
@@ -382,15 +399,13 @@
         <div class="nutrient-row">
           <span class="nutrient-label">🥩 Proteína</span>
           <div class="nutrient-right">
-            <input type="number" class="nutrient-input" id="almuerzo-proteina" min="0" max="500" step="1" placeholder="0" aria-label="Proteína de almuerzo y cena en gramos" />
-            <span class="nutrient-unit">g</span>
+            <input type="text" class="nutrient-input" id="almuerzo-proteina" placeholder="ej. pollo" aria-label="Proteína de almuerzo y cena" />
           </div>
         </div>
         <div class="nutrient-row">
           <span class="nutrient-label">🥦 Fibra</span>
           <div class="nutrient-right">
-            <input type="number" class="nutrient-input" id="almuerzo-fibra" min="0" max="200" step="1" placeholder="0" aria-label="Fibra de almuerzo y cena en gramos" />
-            <span class="nutrient-unit">g</span>
+            <input type="text" class="nutrient-input" id="almuerzo-fibra" placeholder="ej. brócoli" aria-label="Fibra de almuerzo y cena" />
           </div>
         </div>
 
@@ -414,11 +429,11 @@
     // ── Date ─────────────────────────────────────────────────────────────────
     const hoy = new Date();
     document.getElementById('fecha').textContent = hoy.toLocaleDateString('es-MX', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      weekday: 'long', month: 'long', day: 'numeric'
     });
 
     // ── Global timer ─────────────────────────────────────────────────────────
-    const appStartTime = Date.now();
+    let appStartTime = Date.now();
 
     function formatTime(ms) {
       const s = Math.floor(ms / 1000);
@@ -496,6 +511,14 @@
       document.getElementById(`pb-${section}`).style.width = pct + '%';
       document.getElementById(`pt-${section}`).textContent = `${done} / ${total}`;
 
+      // toggle completed state (collapse body, show checkmark)
+      const card = document.querySelector(`.card.${section}`);
+      if (done === total && total > 0) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+
       if (done > 0 && !sectionStartTime[section]) {
         sectionStartTime[section] = Date.now();
       }
@@ -538,7 +561,10 @@
           delete sectionStartTime[sec];
           delete sectionEndTime[sec];
           document.getElementById(`timer-${sec}`).textContent = '--:--';
+          document.querySelector(`.card.${sec}`).classList.remove('completed');
         });
+        appStartTime = Date.now();
+        document.getElementById('timerTotal').textContent = '00:00';
         updateAll();
       }
     });
