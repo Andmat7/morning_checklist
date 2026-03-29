@@ -273,6 +273,13 @@
     .card.completed .card-complete-mark { display: inline; }
     .card.completed .card-body { display: none; }
 
+    /* ── Not-started: collapse body without checkmark ── */
+    .card.not-started .card-body { display: none; }
+
+    /* ── Button state colours ── */
+    .reset-btn.state-iniciar { border-color: #43a047; color: #43a047; }
+    .reset-btn.state-limpiar { border-color: #e53935; color: #e53935; }
+
     @media (max-width: 360px) {
       h1 { font-size: 1rem; }
       .item span { font-size: 0.82rem; }
@@ -289,7 +296,7 @@
       <div class="fecha" id="fecha"></div>
       <div class="timer-total">⏱ <span id="timerTotal">00:00</span></div>
     </div>
-    <button class="reset-btn" id="resetBtn">🔄 Reiniciar</button>
+    <button class="reset-btn state-iniciar" id="resetBtn">▶️ Iniciar</button>
   </div>
 
   <div class="grid">
@@ -432,20 +439,47 @@
       weekday: 'long', month: 'long', day: 'numeric'
     });
 
-    // ── Global timer ─────────────────────────────────────────────────────────
-    let appStartTime = Date.now();
+    // ── Global timer state ────────────────────────────────────────────────────
+    let timerElapsed  = 0;    // ms accumulated before last pause
+    let timerLastStart = null; // Date.now() when last resumed (null = paused)
+    let isStarted     = false;
+
+    function getElapsed() {
+      return timerLastStart !== null
+        ? timerElapsed + (Date.now() - timerLastStart)
+        : timerElapsed;
+    }
+
+    function startGlobalTimer() {
+      if (timerLastStart === null) timerLastStart = Date.now();
+    }
+
+    function pauseGlobalTimer() {
+      if (timerLastStart !== null) {
+        timerElapsed += Date.now() - timerLastStart;
+        timerLastStart = null;
+      }
+    }
+
+    function resetGlobalTimer() {
+      timerLastStart = null;
+      timerElapsed   = 0;
+      document.getElementById('timerTotal').textContent = '00:00';
+    }
 
     function formatTime(ms) {
-      const s = Math.floor(ms / 1000);
-      const h = Math.floor(s / 3600);
-      const m = Math.floor((s % 3600) / 60);
+      const s   = Math.floor(ms / 1000);
+      const h   = Math.floor(s / 3600);
+      const m   = Math.floor((s % 3600) / 60);
       const sec = s % 60;
       const pad = n => String(n).padStart(2, '0');
       return h > 0 ? `${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
     }
 
     setInterval(() => {
-      document.getElementById('timerTotal').textContent = formatTime(Date.now() - appStartTime);
+      if (timerLastStart !== null) {
+        document.getElementById('timerTotal').textContent = formatTime(getElapsed());
+      }
     }, 1000);
 
     // ── Section timers ────────────────────────────────────────────────────────
@@ -466,14 +500,10 @@
     // ── Storage ───────────────────────────────────────────────────────────────
     const STORAGE_KEY  = 'morning_checklist_state';
     const NUTRIENT_KEY = 'morning_checklist_nutrients';
+    const SESSION_KEY  = 'morning_checklist_session';
 
-    function getCheckboxes() {
-      return document.querySelectorAll('input[type="checkbox"]');
-    }
-
-    function getNutrientInputs() {
-      return document.querySelectorAll('.nutrient-input');
-    }
+    function getCheckboxes()    { return document.querySelectorAll('input[type="checkbox"]'); }
+    function getNutrientInputs(){ return document.querySelectorAll('.nutrient-input'); }
 
     function saveState() {
       const state = {};
@@ -483,6 +513,14 @@
       const nutrients = {};
       getNutrientInputs().forEach(inp => { nutrients[inp.id] = inp.value; });
       localStorage.setItem(NUTRIENT_KEY, JSON.stringify(nutrients));
+    }
+
+    function saveSession() {
+      if (isStarted) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ elapsed: getElapsed() }));
+      } else {
+        localStorage.removeItem(SESSION_KEY);
+      }
     }
 
     function loadState() {
@@ -502,6 +540,38 @@
       }
     }
 
+    // ── All-done detection ────────────────────────────────────────────────────
+    function areAllDone() {
+      return SECTIONS.every(sec => {
+        const boxes = document.querySelectorAll(`input[data-section="${sec}"]`);
+        return boxes.length > 0 && Array.from(boxes).every(b => b.checked);
+      });
+    }
+
+    function checkAllDone() {
+      if (!isStarted) return;
+      if (areAllDone()) {
+        pauseGlobalTimer();
+      } else {
+        startGlobalTimer();
+      }
+    }
+
+    // ── Button state ──────────────────────────────────────────────────────────
+    const resetBtn = document.getElementById('resetBtn');
+
+    function setButtonState(state) {
+      if (state === 'iniciar') {
+        resetBtn.textContent = '▶️ Iniciar';
+        resetBtn.classList.remove('state-limpiar');
+        resetBtn.classList.add('state-iniciar');
+      } else {
+        resetBtn.textContent = '🗑️ Limpiar';
+        resetBtn.classList.remove('state-iniciar');
+        resetBtn.classList.add('state-limpiar');
+      }
+    }
+
     // ── Progress ──────────────────────────────────────────────────────────────
     function updateProgress(section) {
       const boxes = document.querySelectorAll(`input[data-section="${section}"]`);
@@ -511,7 +581,6 @@
       document.getElementById(`pb-${section}`).style.width = pct + '%';
       document.getElementById(`pt-${section}`).textContent = `${done} / ${total}`;
 
-      // toggle completed state (collapse body, show checkmark)
       const card = document.querySelector(`.card.${section}`);
       if (done === total && total > 0) {
         card.classList.add('completed');
@@ -537,13 +606,16 @@
 
     function updateAll() {
       SECTIONS.forEach(updateProgress);
+      checkAllDone();
     }
 
     // ── Events ────────────────────────────────────────────────────────────────
     getCheckboxes().forEach(cb => {
       cb.addEventListener('change', () => {
         updateProgress(cb.dataset.section);
+        checkAllDone();
         saveState();
+        saveSession();
       });
     });
 
@@ -551,27 +623,61 @@
       inp.addEventListener('input', saveState);
     });
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      if (confirm('¿Reiniciar todos los ítems?')) {
-        getCheckboxes().forEach(cb => { cb.checked = false; });
-        getNutrientInputs().forEach(inp => { inp.value = ''; });
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(NUTRIENT_KEY);
+    resetBtn.addEventListener('click', () => {
+      if (!isStarted) {
+        // ── Iniciar: start session ──
+        isStarted = true;
         SECTIONS.forEach(sec => {
-          delete sectionStartTime[sec];
-          delete sectionEndTime[sec];
-          document.getElementById(`timer-${sec}`).textContent = '--:--';
-          document.querySelector(`.card.${sec}`).classList.remove('completed');
+          document.querySelector(`.card.${sec}`).classList.remove('not-started');
         });
-        appStartTime = Date.now();
-        document.getElementById('timerTotal').textContent = '00:00';
-        updateAll();
+        startGlobalTimer();
+        setButtonState('limpiar');
+        saveSession();
+      } else {
+        // ── Limpiar: clear everything ──
+        if (confirm('¿Limpiar y reiniciar?')) {
+          getCheckboxes().forEach(cb => { cb.checked = false; });
+          getNutrientInputs().forEach(inp => { inp.value = ''; });
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(NUTRIENT_KEY);
+          localStorage.removeItem(SESSION_KEY);
+          SECTIONS.forEach(sec => {
+            delete sectionStartTime[sec];
+            delete sectionEndTime[sec];
+            document.getElementById(`timer-${sec}`).textContent = '--:--';
+            const card = document.querySelector(`.card.${sec}`);
+            card.classList.remove('completed');
+            card.classList.add('not-started');
+          });
+          resetGlobalTimer();
+          isStarted = false;
+          setButtonState('iniciar');
+          updateAll();
+        }
       }
     });
 
+    // Persist elapsed time on page unload for accuracy
+    window.addEventListener('beforeunload', saveSession);
+
     // ── Init ──────────────────────────────────────────────────────────────────
     loadState();
-    updateAll();
+    const rawSession = localStorage.getItem(SESSION_KEY);
+    if (rawSession) {
+      const session  = JSON.parse(rawSession);
+      timerElapsed   = session.elapsed || 0;
+      isStarted      = true;
+      document.getElementById('timerTotal').textContent = formatTime(timerElapsed);
+      setButtonState('limpiar');
+      updateAll(); // checkAllDone() inside resumes timer if incomplete, keeps paused if all done
+    } else {
+      // First load / after clear: collapse all cards, no timer
+      SECTIONS.forEach(sec => {
+        document.querySelector(`.card.${sec}`).classList.add('not-started');
+      });
+      setButtonState('iniciar');
+      updateAll();
+    }
   </script>
 </body>
 </html>
