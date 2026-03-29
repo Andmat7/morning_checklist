@@ -6,40 +6,24 @@
   <title>Checklist Matutino</title>
   <style>
     :root {
-      --agua:        #2196f3;
-      --sueno:       #9c27b0;
-      --ejercicio:   #43a047;
-      --dieta:       #f57c00;
-      --check-size:  1.3rem;
-
-      /* Dark theme (default) */
-      --bg:              #1a1a2e;
-      --card-bg:         #16213e;
-      --text:            #e0e0e0;
-      --text-muted:      #aaaaaa;
-      --title-color:     #e0e0e0;
-      --border:          #2a2a4a;
-      --hover-bg:        #1e1e3a;
-      --progress-track:  #2a2a4a;
-      --progress-text:   #888888;
-      --btn-bg:          #16213e;
-      --btn-color:       #cccccc;
-      --btn-border:      #3a3a5a;
-    }
-
-    html.light {
-      --bg:              #f0f4f8;
-      --card-bg:         #ffffff;
-      --text:            #333333;
-      --text-muted:      #666666;
-      --title-color:     #1a1a2e;
-      --border:          #f0f0f0;
-      --hover-bg:        #fafafa;
-      --progress-track:  #e8e8e8;
-      --progress-text:   #999999;
-      --btn-bg:          #ffffff;
-      --btn-color:       #555555;
-      --btn-border:      #cccccc;
+      --agua:           #2196f3;
+      --sueno:          #9c27b0;
+      --ejercicio:      #43a047;
+      --dieta:          #f57c00;
+      --bg:             #1a1a2e;
+      --card-bg:        #16213e;
+      --text:           #e0e0e0;
+      --text-muted:     #aaaaaa;
+      --title-color:    #e0e0e0;
+      --border:         #2a2a4a;
+      --hover-bg:       #1e1e3a;
+      --progress-track: #2a2a4a;
+      --progress-text:  #888888;
+      --btn-bg:         #16213e;
+      --btn-color:      #cccccc;
+      --btn-border:     #3a3a5a;
+      --input-bg:       #1a1a35;
+      --input-border:   #3a3a5a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,104 +33,115 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 1.5rem 1rem 3rem;
-      transition: background 0.3s, color 0.3s;
+      padding: 0.4rem 0.5rem 1.5rem;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .reset-btn {
+      flex-shrink: 0;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--btn-bg);
+      color: var(--btn-color);
+      border: 2px solid var(--btn-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: var(--title-color);
+      color: var(--bg);
+      border-color: var(--title-color);
+    }
+
+    .header-info {
+      flex: 1;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
       color: var(--title-color);
+      line-height: 1.2;
     }
 
-    .subtitle {
-      text-align: center;
-      font-size: 0.9rem;
+    .fecha {
+      font-size: 0.72rem;
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
+      margin-top: 0.1rem;
     }
 
+    .timer-total {
+      font-size: 0.82rem;
+      color: #4fc3f7;
+      font-variant-numeric: tabular-nums;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Grid ── */
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-width: 480px;
       margin: 0 auto;
     }
 
     .card {
       background: var(--card-bg);
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       overflow: hidden;
     }
 
     .card-header {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.9rem 1.1rem;
+      justify-content: space-between;
+      padding: 0.45rem 0.8rem;
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: 700;
     }
 
-    .card-header .icon { font-size: 1.4rem; }
-
-    .card.agua     .card-header { background: var(--agua); }
-    .card.sueno    .card-header { background: var(--sueno); }
-    .card.ejercicio .card-header { background: var(--ejercicio); }
-    .card.dieta    .card-header { background: var(--dieta); }
-
-    .card-body { padding: 0.75rem 1.1rem 1rem; }
-
-    .item {
+    .card-header .left {
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      padding: 0.55rem 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-      border-radius: 6px;
-      padding-left: 0.3rem;
+      gap: 0.35rem;
     }
 
-    .item:last-child { border-bottom: none; }
+    .card-header .icon { font-size: 1rem; }
 
-    .item:hover { background: var(--hover-bg); }
-
-    .item input[type="checkbox"] {
-      width: var(--check-size);
-      height: var(--check-size);
-      cursor: pointer;
-      accent-color: var(--accent);
-      flex-shrink: 0;
+    .card-timer {
+      font-size: 0.72rem;
+      opacity: 0.9;
+      font-variant-numeric: tabular-nums;
+      background: rgba(0,0,0,0.2);
+      border-radius: 4px;
+      padding: 0.1rem 0.35rem;
     }
 
-    .card.agua     .item { --accent: var(--agua); }
-    .card.sueno    .item { --accent: var(--sueno); }
-    .card.ejercicio .item { --accent: var(--ejercicio); }
-    .card.dieta    .item { --accent: var(--dieta); }
+    .card.agua      .card-header { background: var(--agua); }
+    .card.sueno     .card-header { background: var(--sueno); }
+    .card.ejercicio .card-header { background: var(--ejercicio); }
+    .card.dieta     .card-header { background: var(--dieta); }
 
-    .item label {
-      font-size: 0.97rem;
-      cursor: pointer;
-      flex: 1;
-    }
-
-    .item input:checked + label {
-      text-decoration: line-through;
-      color: #aaa;
-    }
+    .card-body { padding: 0.35rem 0.75rem 0.55rem; }
 
     .progress-bar-wrapper {
-      height: 5px;
+      height: 4px;
       background: var(--progress-track);
       border-radius: 3px;
-      margin: 0.7rem 0 0.2rem;
+      margin: 0.25rem 0 0.15rem;
       overflow: hidden;
     }
 
@@ -163,227 +158,336 @@
     .card.dieta     .progress-bar { background: var(--dieta); }
 
     .progress-text {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       color: var(--progress-text);
       text-align: right;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.15rem;
     }
 
-    .reset-btn {
-      display: block;
-      margin: 1.75rem auto 0;
-      padding: 0.65rem 2rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      background: var(--btn-bg);
-      color: var(--btn-color);
-      border: 2px solid var(--btn-border);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .reset-btn:hover {
-      background: var(--title-color);
-      color: var(--bg);
-      border-color: var(--title-color);
-    }
-
-    .theme-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: var(--btn-bg);
-      color: var(--btn-color);
-      border: 2px solid var(--btn-border);
-      border-radius: 50%;
-      width: 2.4rem;
-      height: 2.4rem;
-      font-size: 1.1rem;
-      cursor: pointer;
+    /* ── Items — label left, checkbox right (right-thumb friendly) ── */
+    .item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: background 0.2s, color 0.2s;
-      z-index: 100;
+      padding: 0.42rem 0.25rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+      border-radius: 6px;
     }
 
-    .theme-btn:hover {
-      background: var(--hover-bg);
+    .item:last-child { border-bottom: none; }
+    .item:hover, .item:active { background: var(--hover-bg); }
+
+    .item input[type="checkbox"] {
+      order: 2;
+      width: 1.45rem;
+      height: 1.45rem;
+      flex-shrink: 0;
+      margin-left: 0.6rem;
+      cursor: pointer;
+      accent-color: var(--accent);
     }
 
-    @media (max-width: 380px) {
-      h1 { font-size: 1.4rem; }
+    .item span {
+      order: 1;
+      flex: 1;
+      font-size: 0.88rem;
+    }
+
+    .card.agua      .item { --accent: var(--agua); }
+    .card.sueno     .item { --accent: var(--sueno); }
+    .card.ejercicio .item { --accent: var(--ejercicio); }
+    .card.dieta     .item { --accent: var(--dieta); }
+
+    .item input:checked + span {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    /* ── Meal sub-sections ── */
+    .meal-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.35rem 0 0.1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.1rem;
+    }
+
+    /* ── Nutrient input rows ── */
+    .nutrient-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.38rem 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nutrient-label {
+      font-size: 0.86rem;
+      flex: 1;
+    }
+
+    .nutrient-right {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .nutrient-input {
+      width: 3.8rem;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 5px;
+      color: var(--text);
+      font-size: 0.86rem;
+      padding: 0.22rem 0.4rem;
+      text-align: right;
+    }
+
+    .nutrient-input:focus {
+      outline: none;
+      border-color: var(--dieta);
+    }
+
+    .nutrient-unit {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      min-width: 1rem;
+    }
+
+    @media (max-width: 360px) {
+      h1 { font-size: 1rem; }
+      .item span { font-size: 0.82rem; }
     }
   </style>
 </head>
 <body>
 
-  <button class="theme-btn" id="themeBtn" title="Cambiar tema">🌙</button>
-  <h1>☀️ Checklist Matutino</h1>
-  <p class="subtitle" id="fecha"></p>
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <button class="reset-btn" id="resetBtn">🔄 Reiniciar</button>
+    <div class="header-info">
+      <h1>☀️ Checklist Matutino</h1>
+      <div class="fecha" id="fecha"></div>
+      <div class="timer-total">⏱ <span id="timerTotal">00:00</span></div>
+    </div>
+  </div>
 
   <div class="grid">
 
     <!-- AGUA -->
     <div class="card agua">
       <div class="card-header">
-        <span class="icon">💧</span>
-        Agua
+        <div class="left"><span class="icon">💧</span>Agua</div>
+        <span class="card-timer" id="timer-agua">--:--</span>
       </div>
       <div class="card-body">
         <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-agua"></div></div>
         <div class="progress-text" id="pt-agua">0 / 1</div>
 
-        <div class="item">
+        <label class="item">
           <input type="checkbox" id="agua-bote" data-section="agua" />
-          <label for="agua-bote">Alistar bote de agua</label>
-        </div>
+          <span>Alistar bote de agua</span>
+        </label>
       </div>
     </div>
 
     <!-- SUEÑO -->
     <div class="card sueno">
       <div class="card-header">
-        <span class="icon">😴</span>
-        Sueño
+        <div class="left"><span class="icon">😴</span>Sueño</div>
+        <span class="card-timer" id="timer-sueno">--:--</span>
       </div>
       <div class="card-body">
         <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-sueno"></div></div>
         <div class="progress-text" id="pt-sueno">0 / 4</div>
 
-        <div class="item">
+        <label class="item">
           <input type="checkbox" id="sueno-cpap" data-section="sueno" />
-          <label for="sueno-cpap">CPAP listo</label>
-        </div>
-        <div class="item">
+          <span>CPAP listo</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="sueno-alarma" data-section="sueno" />
-          <label for="sueno-alarma">Alarma configurada</label>
-        </div>
-        <div class="item">
+          <span>Alarma configurada</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="sueno-clofreniamina" data-section="sueno" />
-          <label for="sueno-clofreniamina">Clorfeniramina tomada</label>
-        </div>
-        <div class="item">
+          <span>Clorfeniramina tomada</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="sueno-melatonina" data-section="sueno" />
-          <label for="sueno-melatonina">Melatonina tomada</label>
-        </div>
+          <span>Melatonina tomada</span>
+        </label>
       </div>
     </div>
 
     <!-- EJERCICIO -->
     <div class="card ejercicio">
       <div class="card-header">
-        <span class="icon">🏋️</span>
-        Ejercicio
+        <div class="left"><span class="icon">🏋️</span>Ejercicio</div>
+        <span class="card-timer" id="timer-ejercicio">--:--</span>
       </div>
       <div class="card-body">
         <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-ejercicio"></div></div>
         <div class="progress-text" id="pt-ejercicio">0 / 3</div>
 
-        <div class="item">
+        <label class="item">
           <input type="checkbox" id="ejercicio-lista" data-section="ejercicio" />
-          <label for="ejercicio-lista">Lista de ejercicios para mañana</label>
-        </div>
-        <div class="item">
+          <span>Lista de ejercicios para mañana</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="ejercicio-estomago" data-section="ejercicio" />
-          <label for="ejercicio-estomago">Ejercicio de estómago</label>
-        </div>
-        <div class="item">
+          <span>Ejercicio de estómago</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="ejercicio-brazo" data-section="ejercicio" />
-          <label for="ejercicio-brazo">Ejercicio de brazo</label>
-        </div>
+          <span>Ejercicio de brazo</span>
+        </label>
       </div>
     </div>
 
     <!-- DIETA -->
     <div class="card dieta">
       <div class="card-header">
-        <span class="icon">🥗</span>
-        Dieta
+        <div class="left"><span class="icon">🥗</span>Dieta</div>
+        <span class="card-timer" id="timer-dieta">--:--</span>
       </div>
       <div class="card-body">
         <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-dieta"></div></div>
         <div class="progress-text" id="pt-dieta">0 / 2</div>
 
-        <div class="item">
+        <!-- Desayuno -->
+        <div class="meal-title">🌅 Desayuno</div>
+        <div class="nutrient-row">
+          <span class="nutrient-label">🥩 Proteína</span>
+          <div class="nutrient-right">
+            <input type="number" class="nutrient-input" id="desayuno-proteina" min="0" max="500" step="1" placeholder="0" aria-label="Proteína de desayuno en gramos" />
+            <span class="nutrient-unit">g</span>
+          </div>
+        </div>
+        <div class="nutrient-row">
+          <span class="nutrient-label">🥦 Fibra</span>
+          <div class="nutrient-right">
+            <input type="number" class="nutrient-input" id="desayuno-fibra" min="0" max="200" step="1" placeholder="0" aria-label="Fibra de desayuno en gramos" />
+            <span class="nutrient-unit">g</span>
+          </div>
+        </div>
+
+        <!-- Almuerzo y Cena -->
+        <div class="meal-title">🌇 Almuerzo y Cena</div>
+        <div class="nutrient-row">
+          <span class="nutrient-label">🥩 Proteína</span>
+          <div class="nutrient-right">
+            <input type="number" class="nutrient-input" id="almuerzo-proteina" min="0" max="500" step="1" placeholder="0" aria-label="Proteína de almuerzo y cena en gramos" />
+            <span class="nutrient-unit">g</span>
+          </div>
+        </div>
+        <div class="nutrient-row">
+          <span class="nutrient-label">🥦 Fibra</span>
+          <div class="nutrient-right">
+            <input type="number" class="nutrient-input" id="almuerzo-fibra" min="0" max="200" step="1" placeholder="0" aria-label="Fibra de almuerzo y cena en gramos" />
+            <span class="nutrient-unit">g</span>
+          </div>
+        </div>
+
+        <!-- Checkboxes -->
+        <label class="item">
           <input type="checkbox" id="dieta-menu" data-section="dieta" />
-          <label for="dieta-menu">Menú del día definido</label>
-        </div>
-        <div class="item">
+          <span>Menú del día definido</span>
+        </label>
+        <label class="item">
           <input type="checkbox" id="dieta-materiales" data-section="dieta" />
-          <label for="dieta-materiales">Materiales / ingredientes listos</label>
-        </div>
+          <span>Materiales / ingredientes listos</span>
+        </label>
       </div>
     </div>
 
   </div>
 
-  <button class="reset-btn" id="resetBtn">🔄 Reiniciar checklist</button>
-
   <script>
-    // ── Theme ────────────────────────────────────────────────────────────────
-    const THEME_KEY = 'morning_checklist_theme';
-    const html      = document.documentElement;
-    const themeBtn  = document.getElementById('themeBtn');
-
-    function applyTheme(theme) {
-      if (theme === 'light') {
-        html.classList.add('light');
-        themeBtn.textContent = '🌙';
-        themeBtn.title = 'Cambiar a tema oscuro';
-      } else {
-        html.classList.remove('light');
-        themeBtn.textContent = '☀️';
-        themeBtn.title = 'Cambiar a tema claro';
-      }
-    }
-
-    function updateThemeButton(isLight) {
-      themeBtn.textContent = isLight ? '🌙' : '☀️';
-      themeBtn.title = isLight ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
-    }
-
-    // Default is dark; only switch to light if explicitly saved
-    const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
-    applyTheme(savedTheme);
-
-    themeBtn.addEventListener('click', () => {
-      const isLight = html.classList.toggle('light');
-      const next    = isLight ? 'light' : 'dark';
-      localStorage.setItem(THEME_KEY, next);
-      updateThemeButton(isLight);
-    });
+    const SECTIONS = ['agua', 'sueno', 'ejercicio', 'dieta'];
 
     // ── Date ─────────────────────────────────────────────────────────────────
-    // Show today's date in Spanish
-    const fechaEl = document.getElementById('fecha');
     const hoy = new Date();
-    fechaEl.textContent = hoy.toLocaleDateString('es-MX', {
+    document.getElementById('fecha').textContent = hoy.toLocaleDateString('es-MX', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 
-    const STORAGE_KEY = 'morning_checklist_state';
+    // ── Global timer ─────────────────────────────────────────────────────────
+    const appStartTime = Date.now();
+
+    function formatTime(ms) {
+      const s = Math.floor(ms / 1000);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      const pad = n => String(n).padStart(2, '0');
+      return h > 0 ? `${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+    }
+
+    setInterval(() => {
+      document.getElementById('timerTotal').textContent = formatTime(Date.now() - appStartTime);
+    }, 1000);
+
+    // ── Section timers ────────────────────────────────────────────────────────
+    const sectionStartTime = {};
+    const sectionEndTime   = {};
+
+    function tickSectionTimers() {
+      SECTIONS.forEach(sec => {
+        if (sectionStartTime[sec] && !sectionEndTime[sec]) {
+          document.getElementById(`timer-${sec}`).textContent =
+            formatTime(Date.now() - sectionStartTime[sec]);
+        }
+      });
+    }
+
+    setInterval(tickSectionTimers, 1000);
+
+    // ── Storage ───────────────────────────────────────────────────────────────
+    const STORAGE_KEY  = 'morning_checklist_state';
+    const NUTRIENT_KEY = 'morning_checklist_nutrients';
 
     function getCheckboxes() {
       return document.querySelectorAll('input[type="checkbox"]');
+    }
+
+    function getNutrientInputs() {
+      return document.querySelectorAll('.nutrient-input');
     }
 
     function saveState() {
       const state = {};
       getCheckboxes().forEach(cb => { state[cb.id] = cb.checked; });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+      const nutrients = {};
+      getNutrientInputs().forEach(inp => { nutrients[inp.id] = inp.value; });
+      localStorage.setItem(NUTRIENT_KEY, JSON.stringify(nutrients));
     }
 
     function loadState() {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const state = JSON.parse(raw);
-      getCheckboxes().forEach(cb => {
-        if (state[cb.id] !== undefined) cb.checked = state[cb.id];
-      });
+      if (raw) {
+        const state = JSON.parse(raw);
+        getCheckboxes().forEach(cb => {
+          if (state[cb.id] !== undefined) cb.checked = state[cb.id];
+        });
+      }
+      const rawN = localStorage.getItem(NUTRIENT_KEY);
+      if (rawN) {
+        const nutrients = JSON.parse(rawN);
+        getNutrientInputs().forEach(inp => {
+          if (nutrients[inp.id] !== undefined) inp.value = nutrients[inp.id];
+        });
+      }
     }
 
+    // ── Progress ──────────────────────────────────────────────────────────────
     function updateProgress(section) {
       const boxes = document.querySelectorAll(`input[data-section="${section}"]`);
       const total = boxes.length;
@@ -391,13 +495,28 @@
       const pct   = total ? Math.round((done / total) * 100) : 0;
       document.getElementById(`pb-${section}`).style.width = pct + '%';
       document.getElementById(`pt-${section}`).textContent = `${done} / ${total}`;
+
+      if (done > 0 && !sectionStartTime[section]) {
+        sectionStartTime[section] = Date.now();
+      }
+      if (done === total && total > 0 && !sectionEndTime[section]) {
+        sectionEndTime[section] = Date.now();
+        document.getElementById(`timer-${section}`).textContent =
+          formatTime(sectionEndTime[section] - sectionStartTime[section]);
+      } else if (done < total) {
+        delete sectionEndTime[section];
+        if (done === 0) {
+          delete sectionStartTime[section];
+          document.getElementById(`timer-${section}`).textContent = '--:--';
+        }
+      }
     }
 
     function updateAll() {
-      ['agua', 'sueno', 'ejercicio', 'dieta'].forEach(updateProgress);
+      SECTIONS.forEach(updateProgress);
     }
 
-    // Event listeners
+    // ── Events ────────────────────────────────────────────────────────────────
     getCheckboxes().forEach(cb => {
       cb.addEventListener('change', () => {
         updateProgress(cb.dataset.section);
@@ -405,15 +524,26 @@
       });
     });
 
+    getNutrientInputs().forEach(inp => {
+      inp.addEventListener('input', saveState);
+    });
+
     document.getElementById('resetBtn').addEventListener('click', () => {
       if (confirm('¿Reiniciar todos los ítems?')) {
         getCheckboxes().forEach(cb => { cb.checked = false; });
+        getNutrientInputs().forEach(inp => { inp.value = ''; });
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(NUTRIENT_KEY);
+        SECTIONS.forEach(sec => {
+          delete sectionStartTime[sec];
+          delete sectionEndTime[sec];
+          document.getElementById(`timer-${sec}`).textContent = '--:--';
+        });
         updateAll();
       }
     });
 
-    // Init
+    // ── Init ──────────────────────────────────────────────────────────────────
     loadState();
     updateAll();
   </script>
