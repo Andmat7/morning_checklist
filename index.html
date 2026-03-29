@@ -6,14 +6,40 @@
   <title>Checklist Matutino</title>
   <style>
     :root {
-      --agua:     #2196f3;
-      --sueno:    #9c27b0;
-      --ejercicio:#43a047;
-      --dieta:    #f57c00;
-      --bg:       #f0f4f8;
-      --card-bg:  #ffffff;
-      --text:     #333333;
-      --check-size: 1.3rem;
+      --agua:        #2196f3;
+      --sueno:       #9c27b0;
+      --ejercicio:   #43a047;
+      --dieta:       #f57c00;
+      --check-size:  1.3rem;
+
+      /* Dark theme (default) */
+      --bg:              #1a1a2e;
+      --card-bg:         #16213e;
+      --text:            #e0e0e0;
+      --text-muted:      #aaaaaa;
+      --title-color:     #e0e0e0;
+      --border:          #2a2a4a;
+      --hover-bg:        #1e1e3a;
+      --progress-track:  #2a2a4a;
+      --progress-text:   #888888;
+      --btn-bg:          #16213e;
+      --btn-color:       #cccccc;
+      --btn-border:      #3a3a5a;
+    }
+
+    html.light {
+      --bg:              #f0f4f8;
+      --card-bg:         #ffffff;
+      --text:            #333333;
+      --text-muted:      #666666;
+      --title-color:     #1a1a2e;
+      --border:          #f0f0f0;
+      --hover-bg:        #fafafa;
+      --progress-track:  #e8e8e8;
+      --progress-text:   #999999;
+      --btn-bg:          #ffffff;
+      --btn-color:       #555555;
+      --btn-border:      #cccccc;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,19 +50,20 @@
       color: var(--text);
       min-height: 100vh;
       padding: 1.5rem 1rem 3rem;
+      transition: background 0.3s, color 0.3s;
     }
 
     h1 {
       text-align: center;
       font-size: 1.8rem;
       margin-bottom: 0.25rem;
-      color: #1a1a2e;
+      color: var(--title-color);
     }
 
     .subtitle {
       text-align: center;
       font-size: 0.9rem;
-      color: #666;
+      color: var(--text-muted);
       margin-bottom: 1.5rem;
     }
 
@@ -79,7 +106,7 @@
       align-items: center;
       gap: 0.7rem;
       padding: 0.55rem 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
       user-select: none;
       transition: background 0.15s;
@@ -89,7 +116,7 @@
 
     .item:last-child { border-bottom: none; }
 
-    .item:hover { background: #fafafa; }
+    .item:hover { background: var(--hover-bg); }
 
     .item input[type="checkbox"] {
       width: var(--check-size);
@@ -117,7 +144,7 @@
 
     .progress-bar-wrapper {
       height: 5px;
-      background: #e8e8e8;
+      background: var(--progress-track);
       border-radius: 3px;
       margin: 0.7rem 0 0.2rem;
       overflow: hidden;
@@ -137,7 +164,7 @@
 
     .progress-text {
       font-size: 0.75rem;
-      color: #999;
+      color: var(--progress-text);
       text-align: right;
       margin-bottom: 0.4rem;
     }
@@ -148,18 +175,41 @@
       padding: 0.65rem 2rem;
       font-size: 0.95rem;
       font-weight: 600;
-      background: #fff;
-      color: #555;
-      border: 2px solid #ccc;
+      background: var(--btn-bg);
+      color: var(--btn-color);
+      border: 2px solid var(--btn-border);
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s, color 0.2s;
     }
 
     .reset-btn:hover {
-      background: #1a1a2e;
-      color: #fff;
-      border-color: #1a1a2e;
+      background: var(--title-color);
+      color: var(--bg);
+      border-color: var(--title-color);
+    }
+
+    .theme-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--btn-bg);
+      color: var(--btn-color);
+      border: 2px solid var(--btn-border);
+      border-radius: 50%;
+      width: 2.4rem;
+      height: 2.4rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      z-index: 100;
+    }
+
+    .theme-btn:hover {
+      background: var(--hover-bg);
     }
 
     @media (max-width: 380px) {
@@ -169,6 +219,7 @@
 </head>
 <body>
 
+  <button class="theme-btn" id="themeBtn" title="Cambiar tema">🌙</button>
   <h1>☀️ Checklist Matutino</h1>
   <p class="subtitle" id="fecha"></p>
 
@@ -271,6 +322,40 @@
   <button class="reset-btn" id="resetBtn">🔄 Reiniciar checklist</button>
 
   <script>
+    // ── Theme ────────────────────────────────────────────────────────────────
+    const THEME_KEY = 'morning_checklist_theme';
+    const html      = document.documentElement;
+    const themeBtn  = document.getElementById('themeBtn');
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        html.classList.add('light');
+        themeBtn.textContent = '🌙';
+        themeBtn.title = 'Cambiar a tema oscuro';
+      } else {
+        html.classList.remove('light');
+        themeBtn.textContent = '☀️';
+        themeBtn.title = 'Cambiar a tema claro';
+      }
+    }
+
+    function updateThemeButton(isLight) {
+      themeBtn.textContent = isLight ? '🌙' : '☀️';
+      themeBtn.title = isLight ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
+    }
+
+    // Default is dark; only switch to light if explicitly saved
+    const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+    applyTheme(savedTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const isLight = html.classList.toggle('light');
+      const next    = isLight ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      updateThemeButton(isLight);
+    });
+
+    // ── Date ─────────────────────────────────────────────────────────────────
     // Show today's date in Spanish
     const fechaEl = document.getElementById('fecha');
     const hoy = new Date();
