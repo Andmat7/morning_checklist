@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist Matutino</title>
+  <style>
+    :root {
+      --agua:     #2196f3;
+      --sueno:    #9c27b0;
+      --ejercicio:#43a047;
+      --dieta:    #f57c00;
+      --bg:       #f0f4f8;
+      --card-bg:  #ffffff;
+      --text:     #333333;
+      --check-size: 1.3rem;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 0.25rem;
+      color: #1a1a2e;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.1rem;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .card-header .icon { font-size: 1.4rem; }
+
+    .card.agua     .card-header { background: var(--agua); }
+    .card.sueno    .card-header { background: var(--sueno); }
+    .card.ejercicio .card-header { background: var(--ejercicio); }
+    .card.dieta    .card-header { background: var(--dieta); }
+
+    .card-body { padding: 0.75rem 1.1rem 1rem; }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+      border-radius: 6px;
+      padding-left: 0.3rem;
+    }
+
+    .item:last-child { border-bottom: none; }
+
+    .item:hover { background: #fafafa; }
+
+    .item input[type="checkbox"] {
+      width: var(--check-size);
+      height: var(--check-size);
+      cursor: pointer;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .card.agua     .item { --accent: var(--agua); }
+    .card.sueno    .item { --accent: var(--sueno); }
+    .card.ejercicio .item { --accent: var(--ejercicio); }
+    .card.dieta    .item { --accent: var(--dieta); }
+
+    .item label {
+      font-size: 0.97rem;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .item input:checked + label {
+      text-decoration: line-through;
+      color: #aaa;
+    }
+
+    .progress-bar-wrapper {
+      height: 5px;
+      background: #e8e8e8;
+      border-radius: 3px;
+      margin: 0.7rem 0 0.2rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .card.agua      .progress-bar { background: var(--agua); }
+    .card.sueno     .progress-bar { background: var(--sueno); }
+    .card.ejercicio .progress-bar { background: var(--ejercicio); }
+    .card.dieta     .progress-bar { background: var(--dieta); }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: #999;
+      text-align: right;
+      margin-bottom: 0.4rem;
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 1.75rem auto 0;
+      padding: 0.65rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: #fff;
+      color: #555;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: #1a1a2e;
+      color: #fff;
+      border-color: #1a1a2e;
+    }
+
+    @media (max-width: 380px) {
+      h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>☀️ Checklist Matutino</h1>
+  <p class="subtitle" id="fecha"></p>
+
+  <div class="grid">
+
+    <!-- AGUA -->
+    <div class="card agua">
+      <div class="card-header">
+        <span class="icon">💧</span>
+        Agua
+      </div>
+      <div class="card-body">
+        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-agua"></div></div>
+        <div class="progress-text" id="pt-agua">0 / 1</div>
+
+        <div class="item">
+          <input type="checkbox" id="agua-bote" data-section="agua" />
+          <label for="agua-bote">Alistar bote de agua</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUEÑO -->
+    <div class="card sueno">
+      <div class="card-header">
+        <span class="icon">😴</span>
+        Sueño
+      </div>
+      <div class="card-body">
+        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-sueno"></div></div>
+        <div class="progress-text" id="pt-sueno">0 / 4</div>
+
+        <div class="item">
+          <input type="checkbox" id="sueno-cpap" data-section="sueno" />
+          <label for="sueno-cpap">CPAP listo</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="sueno-alarma" data-section="sueno" />
+          <label for="sueno-alarma">Alarma configurada</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="sueno-clofreniamina" data-section="sueno" />
+          <label for="sueno-clofreniamina">Clorfeniramina tomada</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="sueno-melatonina" data-section="sueno" />
+          <label for="sueno-melatonina">Melatonina tomada</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO -->
+    <div class="card ejercicio">
+      <div class="card-header">
+        <span class="icon">🏋️</span>
+        Ejercicio
+      </div>
+      <div class="card-body">
+        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-ejercicio"></div></div>
+        <div class="progress-text" id="pt-ejercicio">0 / 3</div>
+
+        <div class="item">
+          <input type="checkbox" id="ejercicio-lista" data-section="ejercicio" />
+          <label for="ejercicio-lista">Lista de ejercicios para mañana</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="ejercicio-estomago" data-section="ejercicio" />
+          <label for="ejercicio-estomago">Ejercicio de estómago</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="ejercicio-brazo" data-section="ejercicio" />
+          <label for="ejercicio-brazo">Ejercicio de brazo</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIETA -->
+    <div class="card dieta">
+      <div class="card-header">
+        <span class="icon">🥗</span>
+        Dieta
+      </div>
+      <div class="card-body">
+        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-dieta"></div></div>
+        <div class="progress-text" id="pt-dieta">0 / 2</div>
+
+        <div class="item">
+          <input type="checkbox" id="dieta-menu" data-section="dieta" />
+          <label for="dieta-menu">Menú del día definido</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="dieta-materiales" data-section="dieta" />
+          <label for="dieta-materiales">Materiales / ingredientes listos</label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="reset-btn" id="resetBtn">🔄 Reiniciar checklist</button>
+
+  <script>
+    // Show today's date in Spanish
+    const fechaEl = document.getElementById('fecha');
+    const hoy = new Date();
+    fechaEl.textContent = hoy.toLocaleDateString('es-MX', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const STORAGE_KEY = 'morning_checklist_state';
+
+    function getCheckboxes() {
+      return document.querySelectorAll('input[type="checkbox"]');
+    }
+
+    function saveState() {
+      const state = {};
+      getCheckboxes().forEach(cb => { state[cb.id] = cb.checked; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      getCheckboxes().forEach(cb => {
+        if (state[cb.id] !== undefined) cb.checked = state[cb.id];
+      });
+    }
+
+    function updateProgress(section) {
+      const boxes = document.querySelectorAll(`input[data-section="${section}"]`);
+      const total = boxes.length;
+      const done  = Array.from(boxes).filter(b => b.checked).length;
+      const pct   = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById(`pb-${section}`).style.width = pct + '%';
+      document.getElementById(`pt-${section}`).textContent = `${done} / ${total}`;
+    }
+
+    function updateAll() {
+      ['agua', 'sueno', 'ejercicio', 'dieta'].forEach(updateProgress);
+    }
+
+    // Event listeners
+    getCheckboxes().forEach(cb => {
+      cb.addEventListener('change', () => {
+        updateProgress(cb.dataset.section);
+        saveState();
+      });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('¿Reiniciar todos los ítems?')) {
+        getCheckboxes().forEach(cb => { cb.checked = false; });
+        localStorage.removeItem(STORAGE_KEY);
+        updateAll();
+      }
+    });
+
+    // Init
+    loadState();
+    updateAll();
+  </script>
+</body>
+</html>
