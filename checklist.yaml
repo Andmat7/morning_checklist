@@ -1,4 +1,11 @@
 sections:
+  - key: manana
+    title: Mañana
+    icon: "☀️"
+    items:
+      - id: manana-subir-lista
+        text: Subir lista en Whatsapp
+        
   - key: agua
     title: Agua
     icon: "💧"
