@@ -18,6 +18,8 @@ sections:
         text: Melatonina
       - id: sueno-alarma
         text: Alarma configurada
+      - id: sueno-dialisis
+        text: Diálisis lista 
 
   - key: ejercicio
     title: Ejercicio
