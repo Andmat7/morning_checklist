@@ -299,139 +299,163 @@
     <button class="reset-btn state-iniciar" id="resetBtn">▶️ Iniciar</button>
   </div>
 
-  <div class="grid">
+  <div class="grid" id="grid"></div>
 
-    <!-- AGUA -->
-    <div class="card agua">
-      <div class="card-header">
-        <div class="left"><span class="icon">💧</span>Agua</div>
-        <span class="card-complete-mark">✅</span>
-        <span class="card-timer" id="timer-agua">--:--</span>
-      </div>
-      <div class="card-body">
-        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-agua"></div></div>
-        <div class="progress-text" id="pt-agua">0 / 1</div>
-
-        <label class="item">
-          <input type="checkbox" id="agua-bote" data-section="agua" />
-          <span>Alistar bote de agua</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- SUEÑO -->
-    <div class="card sueno">
-      <div class="card-header">
-        <div class="left"><span class="icon">😴</span>Sueño</div>
-        <span class="card-complete-mark">✅</span>
-        <span class="card-timer" id="timer-sueno">--:--</span>
-      </div>
-      <div class="card-body">
-        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-sueno"></div></div>
-        <div class="progress-text" id="pt-sueno">0 / 4</div>
-
-        <label class="item">
-          <input type="checkbox" id="sueno-cpap" data-section="sueno" />
-          <span>CPAP listo</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="sueno-clorfeniramina" data-section="sueno" />
-          <span>Clorfeniramina</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="sueno-melatonina" data-section="sueno" />
-          <span>Melatonina</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="sueno-alarma" data-section="sueno" />
-          <span>Alarma configurada</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- EJERCICIO -->
-    <div class="card ejercicio">
-      <div class="card-header">
-        <div class="left"><span class="icon">🏋️</span>Ejercicio</div>
-        <span class="card-complete-mark">✅</span>
-        <span class="card-timer" id="timer-ejercicio">--:--</span>
-      </div>
-      <div class="card-body">
-        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-ejercicio"></div></div>
-        <div class="progress-text" id="pt-ejercicio">0 / 3</div>
-
-        <label class="item">
-          <input type="checkbox" id="ejercicio-lista" data-section="ejercicio" />
-          <span>Lista de ejercicios para mañana</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="ejercicio-estomago" data-section="ejercicio" />
-          <span>Ejercicio de estómago</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="ejercicio-brazo" data-section="ejercicio" />
-          <span>Ejercicio de brazo</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- DIETA -->
-    <div class="card dieta">
-      <div class="card-header">
-        <div class="left"><span class="icon">🥗</span>Dieta</div>
-        <span class="card-complete-mark">✅</span>
-        <span class="card-timer" id="timer-dieta">--:--</span>
-      </div>
-      <div class="card-body">
-        <div class="progress-bar-wrapper"><div class="progress-bar" id="pb-dieta"></div></div>
-        <div class="progress-text" id="pt-dieta">0 / 2</div>
-
-        <!-- Desayuno -->
-        <div class="meal-title">🌅 Desayuno</div>
-        <div class="nutrient-row">
-          <span class="nutrient-label">🥩 Proteína</span>
-          <div class="nutrient-right">
-            <input type="text" class="nutrient-input" id="desayuno-proteina" placeholder="ej. huevos" aria-label="Proteína de desayuno" />
-          </div>
-        </div>
-        <div class="nutrient-row">
-          <span class="nutrient-label">🥦 Fibra</span>
-          <div class="nutrient-right">
-            <input type="text" class="nutrient-input" id="desayuno-fibra" placeholder="ej. espinaca" aria-label="Fibra de desayuno" />
-          </div>
-        </div>
-
-        <!-- Almuerzo y Cena -->
-        <div class="meal-title">🌇 Almuerzo y Cena</div>
-        <div class="nutrient-row">
-          <span class="nutrient-label">🥩 Proteína</span>
-          <div class="nutrient-right">
-            <input type="text" class="nutrient-input" id="almuerzo-proteina" placeholder="ej. pollo" aria-label="Proteína de almuerzo y cena" />
-          </div>
-        </div>
-        <div class="nutrient-row">
-          <span class="nutrient-label">🥦 Fibra</span>
-          <div class="nutrient-right">
-            <input type="text" class="nutrient-input" id="almuerzo-fibra" placeholder="ej. brócoli" aria-label="Fibra de almuerzo y cena" />
-          </div>
-        </div>
-
-        <!-- Checkboxes -->
-        <label class="item">
-          <input type="checkbox" id="dieta-menu" data-section="dieta" />
-          <span>Menú del día definido</span>
-        </label>
-        <label class="item">
-          <input type="checkbox" id="dieta-materiales" data-section="dieta" />
-          <span>Materiales / ingredientes listos</span>
-        </label>
-      </div>
-    </div>
-
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
   <script>
-    const SECTIONS = ['agua', 'sueno', 'ejercicio', 'dieta'];
+    const CONFIG_URL = 'checklist.yaml';
+    const grid = document.getElementById('grid');
+    let SECTIONS = [];
+
+    async function loadChecklistConfig() {
+      const response = await fetch(CONFIG_URL, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`No se pudo cargar ${CONFIG_URL}`);
+      }
+      const yamlText = await response.text();
+      const parsed = jsyaml.load(yamlText);
+      if (!parsed || !Array.isArray(parsed.sections)) {
+        throw new Error('Formato YAML invalido: se esperaba sections[]');
+      }
+      return parsed.sections;
+    }
+
+    function createCheckboxItem(item, sectionKey) {
+      const label = document.createElement('label');
+      label.className = 'item';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = item.id;
+      input.dataset.section = sectionKey;
+
+      const text = document.createElement('span');
+      text.textContent = item.text || '';
+
+      label.appendChild(input);
+      label.appendChild(text);
+      return label;
+    }
+
+    function createMealTitle(item) {
+      const mealTitle = document.createElement('div');
+      mealTitle.className = 'meal-title';
+      mealTitle.textContent = item.text || '';
+      return mealTitle;
+    }
+
+    function createNutrientRow(item) {
+      const row = document.createElement('div');
+      row.className = 'nutrient-row';
+
+      const label = document.createElement('span');
+      label.className = 'nutrient-label';
+      label.textContent = item.label || '';
+
+      const right = document.createElement('div');
+      right.className = 'nutrient-right';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'nutrient-input';
+      input.id = item.id;
+      input.placeholder = item.placeholder || '';
+      input.setAttribute('aria-label', item.aria_label || item.label || 'Nutriente');
+
+      right.appendChild(input);
+      row.appendChild(label);
+      row.appendChild(right);
+      return row;
+    }
+
+    function createCard(section) {
+      const card = document.createElement('div');
+      card.className = `card ${section.key}`;
+
+      const header = document.createElement('div');
+      header.className = 'card-header';
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const icon = document.createElement('span');
+      icon.className = 'icon';
+      icon.textContent = section.icon || '';
+
+      left.appendChild(icon);
+      left.appendChild(document.createTextNode(section.title || section.key));
+
+      const doneMark = document.createElement('span');
+      doneMark.className = 'card-complete-mark';
+      doneMark.textContent = '✅';
+
+      const timer = document.createElement('span');
+      timer.className = 'card-timer';
+      timer.id = `timer-${section.key}`;
+      timer.textContent = '--:--';
+
+      header.appendChild(left);
+      header.appendChild(doneMark);
+      header.appendChild(timer);
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
+
+      const progressWrapper = document.createElement('div');
+      progressWrapper.className = 'progress-bar-wrapper';
+
+      const progressBar = document.createElement('div');
+      progressBar.className = 'progress-bar';
+      progressBar.id = `pb-${section.key}`;
+
+      progressWrapper.appendChild(progressBar);
+
+      const progressText = document.createElement('div');
+      progressText.className = 'progress-text';
+      progressText.id = `pt-${section.key}`;
+      progressText.textContent = '0 / 0';
+
+      body.appendChild(progressWrapper);
+      body.appendChild(progressText);
+
+      (section.items || []).forEach(item => {
+        const type = item.type || 'checkbox';
+        if (type === 'meal-title') {
+          body.appendChild(createMealTitle(item));
+        } else if (type === 'nutrient') {
+          body.appendChild(createNutrientRow(item));
+        } else {
+          body.appendChild(createCheckboxItem(item, section.key));
+        }
+      });
+
+      card.appendChild(header);
+      card.appendChild(body);
+      return card;
+    }
+
+    function renderChecklist(sections) {
+      grid.innerHTML = '';
+      SECTIONS = sections.map(sec => sec.key);
+      sections.forEach(section => {
+        grid.appendChild(createCard(section));
+      });
+    }
+
+    function renderConfigError(error) {
+      grid.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'card';
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.style.display = 'block';
+      body.style.padding = '1rem';
+      body.textContent = 'No se pudo cargar checklist.yaml. Abre la pagina con un servidor local para permitir fetch de archivos.';
+      card.appendChild(body);
+      grid.appendChild(card);
+      console.error(error);
+    }
 
     // ── Date ─────────────────────────────────────────────────────────────────
     const hoy = new Date();
@@ -610,18 +634,20 @@
     }
 
     // ── Events ────────────────────────────────────────────────────────────────
-    getCheckboxes().forEach(cb => {
-      cb.addEventListener('change', () => {
-        updateProgress(cb.dataset.section);
-        checkAllDone();
-        saveState();
-        saveSession();
+    function bindInputEvents() {
+      getCheckboxes().forEach(cb => {
+        cb.addEventListener('change', () => {
+          updateProgress(cb.dataset.section);
+          checkAllDone();
+          saveState();
+          saveSession();
+        });
       });
-    });
 
-    getNutrientInputs().forEach(inp => {
-      inp.addEventListener('input', saveState);
-    });
+      getNutrientInputs().forEach(inp => {
+        inp.addEventListener('input', saveState);
+      });
+    }
 
     resetBtn.addEventListener('click', () => {
       if (!isStarted) {
@@ -661,23 +687,35 @@
     window.addEventListener('beforeunload', saveSession);
 
     // ── Init ──────────────────────────────────────────────────────────────────
-    loadState();
-    const rawSession = localStorage.getItem(SESSION_KEY);
-    if (rawSession) {
-      const session  = JSON.parse(rawSession);
-      timerElapsed   = session.elapsed || 0;
-      isStarted      = true;
-      document.getElementById('timerTotal').textContent = formatTime(timerElapsed);
-      setButtonState('limpiar');
-      updateAll(); // checkAllDone() inside resumes timer if incomplete, keeps paused if all done
-    } else {
-      // First load / after clear: collapse all cards, no timer
-      SECTIONS.forEach(sec => {
-        document.querySelector(`.card.${sec}`).classList.add('not-started');
-      });
-      setButtonState('iniciar');
-      updateAll();
+    async function initApp() {
+      try {
+        const sections = await loadChecklistConfig();
+        renderChecklist(sections);
+        bindInputEvents();
+        loadState();
+
+        const rawSession = localStorage.getItem(SESSION_KEY);
+        if (rawSession) {
+          const session  = JSON.parse(rawSession);
+          timerElapsed   = session.elapsed || 0;
+          isStarted      = true;
+          document.getElementById('timerTotal').textContent = formatTime(timerElapsed);
+          setButtonState('limpiar');
+          updateAll();
+        } else {
+          SECTIONS.forEach(sec => {
+            document.querySelector(`.card.${sec}`).classList.add('not-started');
+          });
+          setButtonState('iniciar');
+          updateAll();
+        }
+      } catch (error) {
+        setButtonState('iniciar');
+        renderConfigError(error);
+      }
     }
+
+    initApp();
   </script>
 </body>
 </html>

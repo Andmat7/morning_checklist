@@ -1,0 +1,66 @@
+sections:
+  - key: agua
+    title: Agua
+    icon: "💧"
+    items:
+      - id: agua-bote
+        text: Alistar bote de agua
+
+  - key: sueno
+    title: Sueño
+    icon: "😴"
+    items:
+      - id: sueno-cpap
+        text: CPAP listo
+      - id: sueno-clorfeniramina
+        text: Clorfeniramina
+      - id: sueno-melatonina
+        text: Melatonina
+      - id: sueno-alarma
+        text: Alarma configurada
+
+  - key: ejercicio
+    title: Ejercicio
+    icon: "🏋️"
+    items:
+      - id: ejercicio-lista
+        text: Lista de ejercicios para mañana
+      - id: ejercicio-estomago
+        text: Ejercicio de estómago
+      - id: ejercicio-brazo
+        text: Ejercicio de brazo
+
+  - key: dieta
+    title: Dieta
+    icon: "🥗"
+    items:
+      - type: meal-title
+        text: "🌅 Desayuno"
+      - type: nutrient
+        id: desayuno-proteina
+        label: "🥩 Proteína"
+        placeholder: ej. huevos
+        aria_label: Proteína de desayuno
+      - type: nutrient
+        id: desayuno-fibra
+        label: "🥦 Fibra"
+        placeholder: ej. espinaca
+        aria_label: Fibra de desayuno
+      - type: meal-title
+        text: "🌇 Almuerzo y Cena"
+      - type: nutrient
+        id: almuerzo-proteina
+        label: "🥩 Proteína"
+        placeholder: ej. pollo
+        aria_label: Proteína de almuerzo y cena
+      - type: nutrient
+        id: almuerzo-fibra
+        label: "🥦 Fibra"
+        placeholder: ej. brócoli
+        aria_label: Fibra de almuerzo y cena
+      - type: checkbox
+        id: dieta-menu
+        text: Menú del día definido
+      - type: checkbox
+        id: dieta-materiales
+        text: Materiales / ingredientes listos
