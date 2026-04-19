@@ -18,8 +18,18 @@ sections:
         text: Melatonina
       - id: sueno-alarma
         text: Alarma configurada
+      - id: sueno-l-teanina
+        text: L-teanina
       - id: sueno-dialisis
         text: Diálisis lista 
+  - key: suplementos
+    title: Suplementos
+    icon: "💊"
+    items:
+      - id: suplementos-cafeina
+        text: Cafeína
+      - id: suplementos-arginina
+        text: Arginina
 
   - key: ejercicio
     title: Ejercicio
